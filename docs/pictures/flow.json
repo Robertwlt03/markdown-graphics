@@ -1,0 +1,4 @@
+{"kind": "flow", "items": [
+  {"glyph": "document", "title": "Describe", "text": "docs/pictures/<name>.json names a kind and its items."},
+  {"glyph": "hammer", "title": "Draw", "text": "markdown-graphics pictures writes a light and a dark SVG."},
+  {"glyph": "code", "title": "Show", "text": "<picture> in the Markdown file picks the right one."}]}

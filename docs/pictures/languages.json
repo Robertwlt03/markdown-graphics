@@ -1,0 +1,3 @@
+{"kind": "chips", "columns": 4, "items": [
+  {"flag": "US", "title": "English", "text": "English"}, {"flag": "DE", "title": "Deutsch", "text": "German"},
+  {"flag": "FR", "title": "Français", "text": "French"}, {"flag": "JP", "title": "日本語", "text": "Japanese"}]}

@@ -1,0 +1,7 @@
+{"kind": "grid", "columns": 3, "items": [
+  {"glyph": "document", "title": "Banners", "text": "Your icon, a small line, a title and a subtitle on top of every Markdown file."},
+  {"glyph": "widget", "title": "Section icons", "text": "A colored tile with a white glyph in front of each heading."},
+  {"glyph": "window", "title": "Pictures", "text": "Grids, terminals, flows, layers, chips, buttons and slideshows from JSON."},
+  {"glyph": "globe", "title": "Light and dark", "text": "Every picture twice, so GitHub shows the one that fits the reader."},
+  {"glyph": "shield", "title": "No dependencies", "text": "Python's standard library and console-look, nothing else."},
+  {"glyph": "heart", "title": "Accessible", "text": "Every picture carries its words for screen readers."}]}

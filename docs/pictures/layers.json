@@ -1,0 +1,4 @@
+{"kind": "layers", "items": [
+  {"glyph": "terminal", "title": "Command line", "text": "markdown-graphics banner, icon and pictures."},
+  {"glyph": "window", "title": "Kinds", "text": "button, grid, chips, terminal, flow, layers, slideshow, compare."},
+  {"glyph": "document", "title": "markdown-graphics.toml", "text": "Your project's name, icon and folders."}]}

@@ -1,0 +1,44 @@
+# Runs the tests on every pull request and on main, and makes sure this repo's own pictures match
+# what the code draws today, so a change to a kind cannot slip into the README unnoticed.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# The jobs only read the code; GitHub's token gets no right to change anything.
+permissions:
+  contents: read
+
+# A newer push replaces the run of an older one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Actions are pinned to a commit, which nobody can move; Dependabot proposes newer ones.
+jobs:
+  tests:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: python -m pip install .
+      - name: Tests
+        run: python -m unittest discover -s Tests -v
+      - name: The README's pictures are current
+        # git status also sees pictures that were never committed, which git diff would miss.
+        run: |
+          markdown-graphics pictures
+          git status --porcelain -- assets/pictures
+          test -z "$(git status --porcelain -- assets/pictures)"

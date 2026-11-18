@@ -1,0 +1,4 @@
+{"kind": "terminal", "title": "my-project — zsh", "label": "markdown-graphics pictures draws every description light and dark",
+ "lines": [["command", "markdown-graphics pictures"], ["output", "my-project · pictures  assets/pictures"],
+  ["result", "✔ Drawn  12 pictures in assets/pictures"], ["command", "markdown-graphics icon install green download"],
+  ["result", "✔ Drawn  assets/icons/install.svg"]]}
