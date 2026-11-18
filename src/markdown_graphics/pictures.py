@@ -12,7 +12,7 @@ GitHub picks the one that fits. The "kind" of a description says what it draws:
   chips      a flag (names from flags.py) or a short code in a chip, with a name and a
              smaller second name, such as the languages
   terminal   a terminal window that types its commands; lines are [kind, text] with the kinds
-             command, output, result and note
+             command, output, result and note; "width" narrows the window, such as for a phone
   flow       steps from left to right with arrows between them
   layers     stacked bars, the top one first, for parts that build on each other
   slideshow  pictures that fade into each other with a caption; "file" may name {shots} for
@@ -54,6 +54,7 @@ THEMES = {
                  rim="#FFFFFF", rim_opacity=".08", gloss=".16", drop=".45"),
 }
 WIDTH = 900  # a guide's width on GitHub, roughly; the pictures scale with the page
+MINIMUM_WIDTH = 200  # a narrower picture leaves no room for a terminal's title
 CHIP_ROW, TERMINAL_LINE, LAYER_ROW, LINE, ROW_GAP = 52, 24, 64, 19, 26
 LETTER, MONO_LETTER = 7.0, 8.4  # rough widths of a letter at 13.5 and 14 points, for wrapping
 TERMINAL_LETTER = 9.03  # a letter of SF Mono at 15 points; typed commands are fitted to it
@@ -312,18 +313,18 @@ def typed_command(baseline: float, command: str, colors: dict,
 
 
 def terminal(spec: dict, colors: dict) -> str:
-    lines = spec["lines"]
+    lines, width = spec["lines"], spec.get("width", WIDTH)
     height = 74 + len(lines) * TERMINAL_LINE + 10
     body = [
-        f'<rect x="1" y="1" width="{WIDTH - 2}" height="{height - 2}" rx="12" '
+        f'<rect x="1" y="1" width="{width - 2:g}" height="{height - 2}" rx="12" '
         f'fill="{colors["window"]}" stroke="{colors["edge"]}"/>',
-        f'<path d="M1 40V13a12 12 0 0 1 12-12h{WIDTH - 26}a12 12 0 0 1 12 12v27z" '
+        f'<path d="M1 40V13a12 12 0 0 1 12-12h{width - 26:g}a12 12 0 0 1 12 12v27z" '
         f'fill="{colors["bar"]}"/>',
-        f'<line x1="1" y1="40" x2="{WIDTH - 1}" y2="40" stroke="{colors["edge"]}"/>',
+        f'<line x1="1" y1="40" x2="{width - 1:g}" y2="40" stroke="{colors["edge"]}"/>',
         '<circle cx="24" cy="20.5" r="6" fill="#FF5F57"/>'
         '<circle cx="44" cy="20.5" r="6" fill="#FEBC2E"/>'
         '<circle cx="64" cy="20.5" r="6" fill="#28C840"/>',
-        text(WIDTH / 2, 25, spec["title"], 13, colors["muted"], 500, "middle", MONO),
+        text(width / 2, 25, spec["title"], 13, colors["muted"], 500, "middle", MONO),
     ]
     begin = 0.4
     for number, (kind, content) in enumerate(lines):
@@ -336,7 +337,7 @@ def terminal(spec: dict, colors: dict) -> str:
         body.append(f'<g opacity="0">{text(46, baseline, content, 15, color, font=MONO)}'
                     f'<set attributeName="opacity" to="1" begin="{begin:.2f}s" fill="freeze"/></g>')
         begin += 0.12
-    return svg(WIDTH, height, spec["label"], body)
+    return svg(width, height, spec["label"], body)
 
 
 # MARK: Slideshow
@@ -506,6 +507,10 @@ def specification(description: Path) -> dict:
     if not isinstance(columns, int) or columns < 1:
         raise Stop(f"{description.name}: columns must be a number from 1 on",
                    'Write it without quotes, such as "columns": 3.')
+    width = spec.get("width", WIDTH)
+    if not isinstance(width, int | float) or width < MINIMUM_WIDTH:
+        raise Stop(f"{description.name}: width must be a number from {MINIMUM_WIDTH} on",
+                   'Write it without quotes, such as "width": 400.')
     return spec
 
 

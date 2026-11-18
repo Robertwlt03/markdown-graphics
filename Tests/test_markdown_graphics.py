@@ -142,6 +142,23 @@ class PictureTests(ProjectFolder):
                 pictures.draw(project, description, project.root)
         self.assertFalse(project.path(project.pictures_out).exists())
 
+    def terminal(self, name: str, **settings) -> list[Path]:
+        self.describe(name, {"kind": "terminal", "title": "~", "label": "L",
+                             "lines": [["command", "ls"], ["output", "a"]], **settings})
+        project = load()
+        return pictures.draw(project, *pictures.descriptions(project, [name]), project.root)
+
+    def test_a_terminal_takes_a_width(self) -> None:
+        phone = self.terminal("phone", width=400)[0].read_text()
+        self.assertIn('width="400" height="132" viewBox="0 0 400 132"', phone)
+        self.assertIn('<text x="200" y="25"', phone)
+        self.assertIn('width="900" height="132"', self.terminal("wide")[0].read_text())
+
+    def test_a_width_that_is_no_number_or_too_small_is_named(self) -> None:
+        for width in ("400", 120):
+            with self.subTest(width=width), self.assertRaises(Stop):
+                self.terminal("odd", width=width)
+
     def test_a_missing_screenshot_is_named(self) -> None:
         self.describe("tour", {"kind": "slideshow", "pictures": [
             {"file": "{shots}/overview-{theme}.png", "caption": "Overview", "line": "All"}]})
