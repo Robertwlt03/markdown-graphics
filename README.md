@@ -88,7 +88,7 @@ the descriptions in [`docs/pictures`](docs/pictures) drew every picture on this 
 | `button` | a macOS push button with a glyph and a title; `"style": "primary"` fills it |
 | `grid` | items in columns; with `"code": true` the title is a command or path in a monospace chip |
 | `chips` | a flag (`"flag": "DE"`) or a short code with a name and a second name, such as languages |
-| `terminal` | a window that types its commands; lines are `[kind, text]` with `command`, `output`, `result`, `note`; `"width"` narrows it, such as for a phone |
+| `terminal` | a window that types its commands; lines are `[kind, text]` with `command`, `output`, `result`, `note` and `cursor` (the prompt waiting, its cursor blinking); an output's text may be pieces such as `["Made at ", ["accent", "ACME"]]`; `"width"` narrows it, such as for a phone |
 | `flow` | numbered steps from left to right with arrows |
 | `layers` | stacked rows for parts that build on each other, the top one first |
 | `slideshow` | SVGs or screenshots that fade into each other with a caption |

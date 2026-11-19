@@ -154,6 +154,18 @@ class PictureTests(ProjectFolder):
         self.assertIn('<text x="200" y="25"', phone)
         self.assertIn('width="900" height="132"', self.terminal("wide")[0].read_text())
 
+    def test_pieces_stand_side_by_side_in_their_colors(self) -> None:
+        drawn = self.terminal("pieces", lines=[
+            ["output", ["at ", ["accent", "ACME"]]], ["cursor", ""]])[0].read_text()
+        self.assertIn('<text x="46" y="74"', drawn)
+        self.assertIn('<text x="73.09" y="74" font-family', drawn)  # three letters further
+        self.assertIn('fill="#007AFF" text-anchor="start" textLength="36.1"', drawn)
+        self.assertIn('repeatCount="indefinite"', drawn)
+
+    def test_an_unknown_piece_is_named(self) -> None:
+        with self.assertRaises(Stop):
+            self.terminal("odd", lines=[["output", [["shiny", "x"]]]])
+
     def test_a_width_that_is_no_number_or_too_small_is_named(self) -> None:
         for width in ("400", 120):
             with self.subTest(width=width), self.assertRaises(Stop):

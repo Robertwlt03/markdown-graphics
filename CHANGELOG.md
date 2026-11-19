@@ -4,6 +4,17 @@ All notable changes to this project are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-19
+
+### Added
+
+- Terminal lines: an output's text may be pieces side by side, each in a kind's color or the
+  accent's, and a `cursor` line ends with the prompt waiting, its cursor blinking.
+
+### Changed
+
+- Every output line of a terminal is fitted to its letters' width, like the typed commands.
+
 ## [0.2.0] - 2026-11-18
 
 ### Added
@@ -22,5 +33,6 @@ All notable changes to this project are listed here. The format follows
   each drawn light and dark from a JSON description.
 - `markdown-graphics.toml` for the project's name, icon and folders.
 
+[0.3.0]: https://github.com/Robertwlt03/markdown-graphics/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Robertwlt03/markdown-graphics/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Robertwlt03/markdown-graphics/releases/tag/v0.1.0

@@ -12,7 +12,9 @@ GitHub picks the one that fits. The "kind" of a description says what it draws:
   chips      a flag (names from flags.py) or a short code in a chip, with a name and a
              smaller second name, such as the languages
   terminal   a terminal window that types its commands; lines are [kind, text] with the kinds
-             command, output, result and note; "width" narrows the window, such as for a phone
+             command, output, result, note and cursor, the prompt waiting with a blinking cursor;
+             an output's text may be a list of pieces side by side, a piece [kind, text] taking
+             that kind's color or the accent's; "width" narrows the window, such as for a phone
   flow       steps from left to right with arrows between them
   layers     stacked bars, the top one first, for parts that build on each other
   slideshow  pictures that fade into each other with a caption; "file" may name {shots} for
@@ -58,6 +60,8 @@ MINIMUM_WIDTH = 200  # a narrower picture leaves no room for a terminal's title
 CHIP_ROW, TERMINAL_LINE, LAYER_ROW, LINE, ROW_GAP = 52, 24, 64, 19, 26
 LETTER, MONO_LETTER = 7.0, 8.4  # rough widths of a letter at 13.5 and 14 points, for wrapping
 TERMINAL_LETTER = 9.03  # a letter of SF Mono at 15 points; typed commands are fitted to it
+# The color of each kind of terminal line, and of a piece of one; accent marks a name or a link.
+LINE_COLORS = {"output": "output", "result": "success", "note": "quiet", "accent": "accent"}
 SECONDS_PER_PICTURE, FADE_SECONDS, SECONDS_PER_LETTER = 3.5, 0.6, 0.02
 SCREENSHOT_PIXELS, SCREENSHOT_QUALITY = 1640, 82  # sharp on a Retina screen at a guide's width
 BUTTON_HEIGHT, BUTTON_LETTER, BUTTON_MARGIN = 32, 7.9, 4  # a large macOS push button, 14 points
@@ -312,6 +316,29 @@ def typed_command(baseline: float, command: str, colors: dict,
     return pieces, begin + seconds + 0.35
 
 
+def terminal_pieces(baseline: float, kind: str, content: str | list, colors: dict) -> list[str]:
+    """An output line: its text, or its pieces side by side, each in its own kind's color. Every
+    piece is fitted to its letters' width, so the next one starts where it ends in any font."""
+    pieces = [content] if isinstance(content, str) else content
+    left, body = 46.0, []
+    for piece in pieces:
+        piece_kind, words = (kind, piece) if isinstance(piece, str) else piece
+        length = len(words) * TERMINAL_LETTER
+        body.append(text(left, baseline, words, 15, colors[LINE_COLORS[piece_kind]], font=MONO,
+                         length=length))
+        left += length
+    return body
+
+
+def cursor_line(baseline: float, colors: dict, begin: float) -> str:
+    """The prompt waiting for the next command, its cursor blinking from when it appears."""
+    return (f'<g opacity="0">{text(28, baseline, "$", 15, colors["prompt"], 600, font=MONO)}'
+            f'<rect x="46" y="{baseline - 14:g}" width="9" height="18" fill="{colors["text"]}">'
+            f'<animate attributeName="opacity" values="1;0" calcMode="discrete" dur="1s" '
+            f'begin="{begin:.2f}s" repeatCount="indefinite"/></rect>'
+            f'<set attributeName="opacity" to="1" begin="{begin:.2f}s" fill="freeze"/></g>')
+
+
 def terminal(spec: dict, colors: dict) -> str:
     lines, width = spec["lines"], spec.get("width", WIDTH)
     height = 74 + len(lines) * TERMINAL_LINE + 10
@@ -333,8 +360,10 @@ def terminal(spec: dict, colors: dict) -> str:
             pieces, begin = typed_command(baseline, content, colors, begin)
             body += pieces
             continue
-        color = colors[{"output": "output", "result": "success", "note": "quiet"}[kind]]
-        body.append(f'<g opacity="0">{text(46, baseline, content, 15, color, font=MONO)}'
+        if kind == "cursor":
+            body.append(cursor_line(baseline, colors, begin))
+            continue
+        body.append(f'<g opacity="0">{"".join(terminal_pieces(baseline, kind, content, colors))}'
                     f'<set attributeName="opacity" to="1" begin="{begin:.2f}s" fill="freeze"/></g>')
         begin += 0.12
     return svg(width, height, spec["label"], body)
